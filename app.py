@@ -1,4 +1,6 @@
-import flask
+#!/usr/bin/env python3 
+
+from flask import Flask
 from flask import request, jsonify
 from sportsreference.nfl.teams import Teams
 from sportsreference.nfl.schedule import Schedule
@@ -12,8 +14,7 @@ from scipy import stats
 
 scores = pd.read_csv("scores.csv")
 
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+app = Flask(__name__)
 
 #La desviacion estandar para la victoria de un equipo es de 13.86
 
@@ -138,4 +139,7 @@ def api_team():
     return jsonify(team_matches)
 
 
-app.run()
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',port="5000",debug=True)
