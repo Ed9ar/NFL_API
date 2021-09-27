@@ -1,9 +1,7 @@
-import flask
-from flask import request, jsonify
 from sportsreference.nfl.teams import Teams
 from sportsreference.nfl.schedule import Schedule
 import pandas as pd
-import re
+
 from datetime import datetime
 from sportsreference.nfl.boxscore import Boxscores
 
@@ -12,12 +10,10 @@ from scipy import stats
 
 scores = pd.read_csv("scores.csv")
 
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
 
 #La desviacion estandar para la victoria de un equipo es de 13.86
 
-def calcWinner(home_team, away_team, teamStats, i, date):
+def calcWinner(home_team, away_team, teamStats, i, dates):
 
     #normalizar valores 
     #Utilizamos el diferencial de puntos de ambos equipos para determinar por cuantos puntos se ganara el encuentro
@@ -42,17 +38,17 @@ def calcWinner(home_team, away_team, teamStats, i, date):
     #print(win_away)
 
     if win_home > win_away:
-        #print(str(home_team) + " tiene un " + str(win_home) + " de ganar el partido a " + str(away_team)) 
+        print(str(home_team) + " tiene un " + str(win_home) + " de ganar el partido a " + str(away_team)) 
         if scores['score_home'][i] > scores['score_away'][i]:
-            return 1, home_team, away_team, win_home, date
+            return 1, home_team, away_team, win_home, dates
         else:
-            return 0, home_team, away_team, win_home, date
+            return 0, home_team, away_team, win_home, dates
     else:
-        #print(str(away_team) + " tiene un " + str(win_away) + " de ganar el partido a " + str(home_team))
+        print(str(away_team) + " tiene un " + str(win_away) + " de ganar el partido a " + str(home_team))
         if scores['score_away'][i] > scores['score_home'][i]:
-            return 1,away_team, home_team, win_away, date
+            return 1,away_team, home_team, win_away, dates
         else:
-            return 0,away_team, home_team, win_away, date
+            return 0,away_team, home_team, win_away, dates
     #obtener diferencial de yardas
     #presnentar diferencial de puntos
     #diferencial de turnovers
@@ -79,7 +75,7 @@ def match(year):
     incorrectas = 0
     teams_df = teamSeasonStats(year)
     
-    #print(teams_df)
+    print(teams_df)
     #aqui ver como se pueden sacar los partidos
 
     
@@ -90,52 +86,33 @@ def match(year):
         else:
             predicciones_correctas+=1
     
-    #print("Se hicieron un total de predicciones : " + str(predicciones_correctas+incorrectas))
-    #print("CORRECTAS: " + str(predicciones_correctas))
-    #print("INCORRECTAS " + str(incorrectas))
+    print("Se hicieron un total de predicciones : " + str(predicciones_correctas+incorrectas))
+    print("CORRECTAS: " + str(predicciones_correctas))
+    print("INCORRECTAS " + str(incorrectas))
 
-    #print("EFICACIA "+ str((predicciones_correctas*100)/(predicciones_correctas+incorrectas))+ "%")
+    print("EFICACIA "+ str((predicciones_correctas*100)/(predicciones_correctas+incorrectas))+ "%")
     
 def team_prediction(team, year):
     teams_df = teamSeasonStats(year)
     
-    #print(teams_df)
+    print(teams_df)
     #aqui ver como se pueden sacar los partidos
     team_info = []
 
     for i in range(len(scores)):
-        num, winner, loser, win_prob, date = calcWinner(scores['team_home'][i], scores['team_away'][i], teams_df, i, scores['schedule_date'][i])
+        num, winner, loser, win_prob, dates = calcWinner(scores['team_home'][i], scores['team_away'][i], teams_df, i,scores['schedule_date'][i])
         if winner == team or loser == team:
-            team_info.append([winner, win_prob, loser, date])
+            team_info.append([winner, win_prob, loser, dates])
     
     return team_info
 
-@app.route('/', methods=['GET'])
-def home():
-    return "<h1>API Q-Pron</h1><p>This site is a prototype API for NFL prediction retrievals</p>"
-
-# A route to return all of the available entries in our catalog.
-@app.route('/api/v1/resources/nfl', methods=['GET'])
-def api_team():
-    year = 2021
-    #match(year)
-    team_matches = []
-    if 'team' in request.args:
-        team= request.args['team']
-        print(team)
-        team = re.sub(r"(\w)([A-Z])", r"\1 \2", team)
-        matches = team_prediction(team, 2021)
-    else:
-        return "Error: No id field provided. Please specify an id."
-    
-    
-    for m in matches:
-        team_matches.append({'winnner': m[0],
-        'win_prob': m[1],
-        'loser': m[2],
-        'date': m[3]
-        })
-    return jsonify(team_matches)
+year = 2021
 
 
-app.run()
+
+match(year)
+print(team_prediction('Baltimore Ravens', 2021))
+
+
+
+
