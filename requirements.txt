@@ -1,4 +1,1 @@
-Flask>=1.0
-sportsreference
-pandas
-scipy
+Flask>=1.0,<=1.1.2
