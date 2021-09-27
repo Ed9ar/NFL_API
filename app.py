@@ -1,4 +1,4 @@
-import flask
+'''import flask
 from flask import request, jsonify
 from sportsreference.nfl.teams import Teams
 from sportsreference.nfl.schedule import Schedule
@@ -138,4 +138,10 @@ def api_team():
     return jsonify(team_matches)
 
 
-app.run()
+app.run()'''
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello, World!"
