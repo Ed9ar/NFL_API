@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'nfl-flask'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_664630DDFA644FA1AD17BB8670EC659A }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_234141551EE44F84A5275ED7BBDC0D8E }}
