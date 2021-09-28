@@ -1,4 +1,3 @@
-Flask>=1.0
 sportsreference
 pandas
 Flask==0.10.1
