@@ -113,7 +113,7 @@ def team_prediction(team, year):
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>API Q-Pron</h1><p>This site is a prototype API for NFL prediction retrievals</p>"
+    return "Q-PRON"
 
 # A route to return all of the available entries in our catalog.
 @app.route('/api/v1/resources/nfl', methods=['GET'])
