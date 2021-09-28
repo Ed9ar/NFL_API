@@ -1,26 +1,5 @@
 #!/usr/bin/env python3 
 
-
-from flask import Flask, render_template
-import os
-
-
-app = Flask(__name__)
-
-
-port = int(os.environ.get('PORT', 5000))
-
-
-
-@app.route('/')
-def index():
-    return "Hello World"
-
-
-app.run(host='0.0.0.0', port=port, debug=True)
-
-
-'''
 from flask import Flask
 from flask import request, jsonify
 from sportsreference.nfl.teams import Teams
@@ -29,7 +8,7 @@ import pandas as pd
 import re
 from datetime import datetime
 from sportsreference.nfl.boxscore import Boxscores
-
+from scipy import stats
 from sportsreference.nfl.teams import Teams
 
 scores = pd.read_csv("scores.csv")
@@ -85,7 +64,7 @@ def teamSeasonStats(year):
     teams = Teams(year)
     for team in teams:
         # assign data of lists.  
-        data = {'Margin of Victory': team.margin_of_victory, 'Rank': team.rank,'Win Percentage':team.win_percentage, 'Turnovers': team.interceptions+team.fumbles}    
+        data = {'Margin of Victory': team.margin_of_victory, 'Rank': team.rank,'Win Percentage':team.win_percentage, 'Turnovers': team.interceptions+team.fumbles, "Points_for": team.points_for, "Points_Against": team.points_against, "Ofensiva":team.offensive_simple_rating_system, "Defensiva": team.defensive_simple_rating_system, "Global": team.simple_rating_system}    
         team_df = pd.DataFrame(data, index=[team.name]) 
          
         teamsdf_final = pd.concat([teamsdf_final,team_df])
@@ -135,6 +114,27 @@ def team_prediction(team, year):
 def home():
     return "Q-PRON"
 
+@app.route('/api/v1/stats/nfl', methods=['GET'])
+def api_stats():
+    year = 2021
+    teamdf = pd.DataFrame()
+    team_matches = []
+    if 'team' in request.args:
+        team= request.args['team']
+        print(team)
+        team = re.sub(r"(\w)([A-Z])", r"\1 \2", team)
+        teams = Teams(year)
+        for te in teams:
+            if team == te.name:
+            # assign data of lists.  
+                data = {'Margin of Victory': te.margin_of_victory, 'Rank': te.rank,'Win Percentage':te.win_percentage, 'Turnovers': te.interceptions+te.fumbles, "Points_for": te.points_for, "Points_Against": te.points_against, "Ofensiva":te.offensive_simple_rating_system, "Defensiva": te.defensive_simple_rating_system, "Global": te.simple_rating_system}    
+    else:
+        return "Error: No id field provided. Please specify an id."
+    
+    
+    return jsonify(data)
+    
+
 # A route to return all of the available entries in our catalog.
 @app.route('/api/v1/resources/nfl', methods=['GET'])
 def api_team():
@@ -161,4 +161,3 @@ def api_team():
 
 
 app.run()
-'''
