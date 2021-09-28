@@ -1,5 +1,19 @@
 #!/usr/bin/env python3 
 
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return "Hello World"
+
+if __name__ == '__main__':
+    app.run()
+
+
+'''
 from flask import Flask
 from flask import request, jsonify
 from sportsreference.nfl.teams import Teams
@@ -10,7 +24,6 @@ from datetime import datetime
 from sportsreference.nfl.boxscore import Boxscores
 
 from sportsreference.nfl.teams import Teams
-from scipy import stats
 
 scores = pd.read_csv("scores.csv")
 
@@ -141,3 +154,4 @@ def api_team():
 
 
 app.run()
+'''
